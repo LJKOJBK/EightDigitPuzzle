@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>8数码问题</title>
+    <style type="text/css">
+        body {
+            margin: 0 auto;
+            padding: 50px;
+
+        }
+
+        #about {
+            width: 300px;
+            padding: 10px 30px 10px;
+            margin-right: 50px;
+            margin-top: 5px;
+            border: 3px dashed #ced3a7;
+            border-radius: 10px;
+            font-size: 1.4em;
+            float: right;
+        }
+
+        #gameFrame {
+            width: 600px;
+            height: 600px;
+            position: relative;
+            margin-left: 100px;
+        }
+
+        #game_board {
+            width: 600px;
+            height: 600px;
+            background: lightgray;
+            position: relative;
+            border: solid black 1px;
+            -webkit-box-shadow: 5px 5px 5px #111;
+            box-shadow: 5px 5px 5px #111;
+        }
+
+        input {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            outline: none;
+            width: 130px;
+            margin: 0 7px;
+            padding: 7px 0 0;
+            border-radius: 3px;
+            text-align: center;
+            font-size: 0.8em;
+
+        }
+
+        input:focus {
+            color: #ccc;
+            border-color: black;
+        }
+
+        #treeFrame {
+            margin-top: 70px;
+            visibility: hidden;
+        }
+
+
+        #instruction {
+            border: solid 1px #ccc;
+            width: 1089px;
+            margin-bottom: 0;
+            border-bottom-style: none;
+            padding: 10px;
+            border-radius: 3px 3px 0 0;
+            background-color: #eee;
+        }
+
+        #svgg {
+            padding: 40px 0;
+            border: solid 1px #ccc;
+            border-radius: 0 0 3px 3px;
+        }
+
+    </style>
+
+    <style type="text/css">
+
+        .node circle {
+            fill: lightgrey;
+        }
+
+        .node.not circle {
+            fill: black;
+        }
+
+        .node.desired circle {
+            fill: red;
+        }
+
+        .node text {
+            fill: black;
+        }
+
+        .node.choose text {
+            fill: red;
+        }
+
+        .link {
+            fill: none;
+            stroke: lightgrey;
+        }
+
+        .d3-tip {
+            line-height: 1;
+            padding: 6px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* Creates a small triangle extender for the tooltip */
+        .d3-tip:after {
+            box-sizing: border-box;
+            display: inline;
+            font-size: 10px;
+            width: 100%;
+            line-height: 1;
+            color: rgba(0, 0, 0, 0.8);
+            content: "\25BC";
+            position: absolute;
+            text-align: center;
+        }
+
+        /* Style northward tooltips specifically */
+        .d3-tip.n:after {
+            margin: -2px 0 0 0;
+            top: 100%;
+            left: 0;
+        }
+
+        .solve {
+            display: block;
+            text-decoration: none;
+            margin: 10px;
+        }
+
+        .solve:hover {
+            color: #00b100;
+        }
+
+    </style>
+
+
+</head>
+<body>
+
+
+<div id="main_container">
+    <div>
+        <div id="about">
+            <h2>解8数码问题</h2>
+            <p> 当前状态：<input type="text" id="iinitStr"
+                            onkeyup="value = value.replace(/[^0-8]/g,'');value = value.replace(/([0-8])(.*?)\1/g, function (substring, arg1, arg2) {return arg1 + arg2;})"
+                            maxlength="9"></p>
+            <p> 目标状态：<input type="text" id="idestStr"
+                            onkeyup="value = value.replace(/[^0-8]/g,'');value = value.replace(/([0-8])(.*?)\1/g, function (substring, arg1, arg2) {return arg1 + arg2;})"
+                            maxlength="9"></p>
+            <div id="solve">
+                <a id="DFSSolve" href="#" class="solve"> 使用DFS算法求解</a>
+                <a id="BFSSolve" href="#" class="solve"> 使用BFS算法求解</a>
+                <a id="AStarSolve" href="#" class="solve"> 使用A*算法求解</a>
+            </div>
+
+            <p id="resultt"></p> <!-- 生成了多少个节点，检查了多少个节点后得出结果-->
+        </div>
+        <div id="gameFrame">
+            <div id="game_board"></div>
+        </div>
+    </div>
+    <div id="treeFrame">
+        <div id="instruction">
+            点击面板任意位置，演示下一步，或者<a id="finishh" href="#">点击这里</a>一步完成演示。</a>
+        </div>
+    </div>
+</div>
+<!-- 导入次序不能变动，且只能放在末尾 -->
+<script src="js/utils/jquery-1.8.3.js"></script>
+<script src="js/utils/d3.v2.js"></script>
+<script src="js/utils/d3-tip.js"></script>
+<script src="js/solver.js"></script>
+<script src="js/game.js"></script>
+<script src="js/tree.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
