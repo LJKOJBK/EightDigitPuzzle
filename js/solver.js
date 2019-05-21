@@ -330,6 +330,7 @@ let Puzzle = {
 
         console.log('start searching');
 
+        const maxDepth = 15;        // 搜索的最大深度
         let closedList = [];        // CLOSED表
         let openList = [];          // OPEN表
         let generatedList = [];     // 记录已经生成的所有状态的表
@@ -357,6 +358,13 @@ let Puzzle = {
 
         // 遍历当前OPEN表中的状态，直到找到解
         while (openList.length) {
+            // 超过最大深度则换一个最短的节点重新搜索
+            if(openList[0].f > maxDepth) {
+                openList.sort(function (a, b) {
+                    return a.f - b.f;
+                });
+            }
+
             // 取出OPEN表中的第一个状态
             // 从这个状态生成一棵树，parent是上一个扩展节点的id，children是扩展出来所有节点的id
             let nowState = openList.shift();
