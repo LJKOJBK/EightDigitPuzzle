@@ -109,7 +109,8 @@ $('#solve').on('click', function (e) {
     // 点击不同的求解方法，使用不同的解法获得结果
     switch (e.target.id) {
         case 'DFSSolve': {
-            Result = Puzzle.solveByDFS();
+            let depth = $('#depth')[0].value;
+            Result = Puzzle.solveByDFS(depth);
             break;
         }
         case 'BFSSolve': {

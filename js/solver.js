@@ -76,6 +76,27 @@ State.prototype.indexxOf = function (stateList) {
     return -1;
 };
 
+State.prototype.indexxxOf = function (stateList) {
+    let mark = -1;//判断是否有 op 0:没有
+    let p = stateList;
+    //p clsoetable
+    for(let i = 0; i < 9; i++) {
+        let j = this.array[i] - '0';
+        //console.log(p[i]);
+        if(p[j] === -1) {
+            mark = i;
+            let now = [];
+            for(let k = 0; k < 10; k++)
+                now[k] = -1;
+            p[j] = now;
+        }
+        p = p[j];
+    }
+    if(mark == -1)
+        return 1;//在
+    return -1;//不在
+};
+
 // 得到f = g + h 中的 h，使用曼哈顿距离
 State.prototype.getHeuristic = function () {
     let manhattan = 0;
@@ -152,6 +173,7 @@ let Puzzle = {
         let oneExpand = {};         // 临时记录当前节点扩展出的状态
         let lastExpandedIndex = -1; // 记录上一个扩展节点的id，即扩展出当前节点的父节点的id
         let newInserted = [];       // 临时记录当前节点扩展出的子节点
+        let start = new Date();
 
         // OPEN表保存所有已生成而未检查的节点，CLOSED表中记录已检查过的节点。
         openList.push(Puzzle.initialState);
@@ -194,8 +216,9 @@ let Puzzle = {
             console.log('already checked ' + closedList.length + ' states');
             // 生成的节点，和检查的节点，和展开的节点
             if (nowState.isSolved()) {
+                let end = new Date();
                 let prompts = `生成了 <b>${generatedList.length}</b> 个节点状态，检查了 <b>${closedList.length}
-                </b>个节点后，<br><br>找到了目标节点！返回了一条<b>${nowState.g}</b> 步的最短路径`;
+                </b>个节点后，<br><br>找到了目标节点！返回了一条<b>${nowState.g}</b> 步的最短路径<br>运行时间${end - start}ms`;
 
                 // 生成dataList，用于SVG渲染出生成树
                 let dataList = generatedList.map((value, key) => {
@@ -240,6 +263,7 @@ let Puzzle = {
 
         console.log('start searching');
 
+        let closedList1 = [];        // CLOSED表
         let closedList = [];        // CLOSED表
         let openList = [];          // OPEN表
         let generatedList = [];     // 记录已经生成的所有状态的表
@@ -247,15 +271,17 @@ let Puzzle = {
         let oneExpand = {};         // 临时记录当前节点扩展出的状态
         let lastExpandedIndex = -1; // 记录上一个扩展节点的id，即扩展出当前节点的父节点的id
         let newInserted = [];       // 临时记录当前节点扩展出的子节点
+        let start = new Date();
 
         // OPEN表保存所有已生成而未检查的节点，CLOSED表中记录已检查过的节点。
         openList.push(Puzzle.initialState);
         generatedList.push(Puzzle.initialState);
         Puzzle.initialState.id = 0;
-
+        for(let k = 0; k < 9; k++)
+            closedList[k] = -1;
         // 根据上一个状态产生了一个新状态，检测是否将该状态添加进OPEN表中
         function tryInsertOpenList(state) {
-            if (state !== undefined && state.indexxOf(closedList) === -1) {
+            if (state !== undefined && state.indexxxOf(closedList) === -1) {
                 openList.push(state);
                 // id表示在已生成表中的位置
                 state.id = generatedList.length;
@@ -279,13 +305,14 @@ let Puzzle = {
             newInserted = [];
             lastExpandedIndex = nowState.id;
 
-            closedList.push(nowState);
+            closedList1.push(nowState);
 
-            console.log('already checked ' + closedList.length + ' states');
+            console.log('already checked ' + closedList1.length + ' states');
             // 生成的节点，和检查的节点，和展开的节点
             if (nowState.isSolved()) {
-                let prompts = `生成了 <b>${generatedList.length}</b> 个节点状态，检查了 <b>${closedList.length}
-                </b>个节点后，<br><br>找到了目标节点！返回了一条<b>${nowState.g}</b> 步的最短路径`;
+                let end = new Date();
+                let prompts = `生成了 <b>${generatedList.length}</b> 个节点状态，检查了 <b>${closedList1.length}
+                </b>个节点后，<br><br>找到了目标节点！返回了一条<b>${nowState.g}</b> 步的最短路径<br>运行时间${end - start}ms`;
 
                 // 生成dataList，用于SVG渲染出生成树
                 let dataList = generatedList.map((value, key) => {
@@ -323,14 +350,14 @@ let Puzzle = {
     },
 
     // DFS核心代码 深度优先搜索
-    solveByDFS() {
+    solveByDFS(depth) {
         if (!Puzzle.isSolvable()) {
             return undefined;
         }
 
         console.log('start searching');
 
-        const maxDepth = 15;        // 搜索的最大深度
+        const maxDepth = depth;        // 搜索的最大深度
         let closedList = [];        // CLOSED表
         let openList = [];          // OPEN表
         let generatedList = [];     // 记录已经生成的所有状态的表
@@ -338,6 +365,7 @@ let Puzzle = {
         let oneExpand = {};         // 临时记录当前节点扩展出的状态
         let lastExpandedIndex = -1; // 记录上一个扩展节点的id，即扩展出当前节点的父节点的id
         let newInserted = [];       // 临时记录当前节点扩展出的子节点
+        let start = new Date();
 
         // OPEN表保存所有已生成而未检查的节点，CLOSED表中记录已检查过的节点。
         openList.push(Puzzle.initialState);
@@ -363,6 +391,10 @@ let Puzzle = {
                 openList.sort(function (a, b) {
                     return a.f - b.f;
                 });
+                if(openList[0].f > maxDepth) {
+                    alert('当前深度下没有找到解！');
+                    return ;
+                }
             }
 
             // 取出OPEN表中的第一个状态
@@ -382,8 +414,9 @@ let Puzzle = {
             console.log('already checked ' + closedList.length + ' states');
             // 生成的节点，和检查的节点，和展开的节点
             if (nowState.isSolved()) {
+                let end = new Date();
                 let prompts = `生成了 <b>${generatedList.length}</b> 个节点状态，检查了 <b>${closedList.length}
-                </b>个节点后，<br><br>找到了目标节点！返回了一条<b>${nowState.g}</b> 步的最短路径`;
+                </b>个节点后，<br><br>找到了目标节点！返回了一条<b>${nowState.g}</b> 步的最短路径 <br>运行时间${end - start}ms`;
 
                 // 生成dataList，用于SVG渲染出生成树
                 let dataList = generatedList.map((value, key) => {
