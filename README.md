@@ -18,7 +18,7 @@
 
 ## 成果实现
 一个网页文件，算法逻辑和图形演示用JavaScript实现，用主流浏览器打开即可：
-https://zenuora.github.io/Astar-8puzzle/index.html
+https://ljkojbk.github.io/EightDigitPuzzle/
 
 ## 概念
 ### 图
